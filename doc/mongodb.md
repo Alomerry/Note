@@ -268,6 +268,16 @@ $ systemctl restart mongod
 
 [索引](https://blog.csdn.net/weixin_33446857/article/details/83085018)
 
+https://www.cnblogs.com/duhuo/articles/4762933.html
+
+https://zhuanlan.zhihu.com/p/102895029
+
+https://blog.csdn.net/u013066244/article/details/78961602
+
+https://www.cnblogs.com/c-abc/p/6023824.html
+
+https://blog.csdn.net/chigua1760/article/details/100642249
+
 ## Bulk
 
 [Bulk](https://docs.mongodb.com/manual/core/bulk-write-operations/)
