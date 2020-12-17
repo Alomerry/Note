@@ -1,0 +1,24 @@
+{
+  "name": "Note",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Alomerry/Note.git",
+  "author": "Alomerry Wu <alomerry@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vuepress dev .",
+    "build": "vuepress build ."
+  },
+  "devDependencies": {
+    "@vuepress/plugin-back-to-top": "^1.5.4",
+    "markdown-it-attrs": "^3.0.3",
+    "markdown-it-footnote": "^3.0.2",
+    "markdown-it-replace-link": "^1.1.0",
+    "markdown-it-sub": "^1.0.0",
+    "markdown-it-sup": "^1.0.0",
+    "vuepress": "^1.5.4"
+  },
+  "dependencies": {
+    "node-forge": "^0.10.0"
+  }
+}
