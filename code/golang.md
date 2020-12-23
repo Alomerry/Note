@@ -343,3 +343,6 @@ PIC
 ## GC
 
 [GC](http://guileen.github.io/2016/06/15/how-did-i-optimize-golang-gc/)
+
+## 方法的结构指针接收者和结构值接收者
+
