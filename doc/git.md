@@ -195,3 +195,12 @@ git push -f
 第一步： git clone [git-url] -b [branch-name]
 
 第二步：git reset --hard [commit-number]
+
+## cherry-pick 指定 commit 的部分文件
+
+- 从 `master` 切出 hotfix 分支 `feat-hotfix-<commit_id>`
+- `git cherry-pick -n <commit_hash>`，-n 是 `--no-commit,don't automatically commit`
+- 移除不需要的文件，`git checkout <file_name>`
+- 获取这个 commit 的提交信息：`git log --pretty=format:提交者：%an，提交时间：%ad，提交说明：%s <commit_id> -1`
+- 使用旧的提交信息：`git commit --author="<author>" --date="<date>" -m "<message>"`
+
