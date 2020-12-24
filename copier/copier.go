@@ -1,74 +1,86 @@
 package copier
 
 import (
-	"errors"
+	"database/sql"
 	"reflect"
 )
 
-func init() {
+type Converter func(from reflect.Value, toType reflect.Type) (reflect.Value, error)
+
+type Transformer map[string]interface{}
+
+type Mapper interface {
+	From(fromValue interface{}) CopyCommand
+
+	RegisterConverter(matcher TypeMatcher, converter Converter) Mapper
+
+	RegisterConverterFunc(matcher TypeMatcherFunc, converter Converter) Mapper
+
+	RegisterResetDiffField(diffFields []DiffFieldPair) Mapper
+
+	RegisterTransformer(transformer Transformer) Mapper
+
+	Install(Module) Mapper
 
 }
 
-func Copy(toValue interface{}, fromValue interface{}, resetFieldMethods map[string]interface{}, diffFields map[string]string) error {
-	var (
-		from    = indirect(reflect.ValueOf(fromValue))
-		to      = indirect(reflect.ValueOf(toValue))
-	)
+type Module func(Mapper)
 
-	if !to.CanAddr() {
-		return errors.New("copy to value is unaddressable")
-	}
+type TypeMatcher interface {
+	Matches(Target) bool
+}
 
-	// Return is from value is invalid
-	if !from.IsValid() {
-		return nil
-	}
+type TypeMatcherFunc func(Target) bool
 
-	fromType := indirectType(from.Type())
-	toType := indirectType(to.Type())
+func (f TypeMatcherFunc) Matches(target Target) bool {
+	return f(target)
+}
 
-	// Just set it if possible to assign
-	// And need to do copy anyway if the type is struct
-	if fromType.Kind() != reflect.Struct && from.Type().AssignableTo(to.Type()) {
-		to.Set(from)
-		return nil
-	}
+type Target struct {
+	From reflect.Type
+	To   reflect.Type
+}
 
-	for i := 0; i < fromType.NumField(); i++ {
-		originField := fromType.Field(i)
-		fieldName := originField.Name
-		value := from.Field(i)
-		if method, ok := resetFieldMethods[fieldName]; ok {
-			f := reflect.ValueOf(method)
-			result := f.Call(
-				[]reflect.Value{value},
-			)
-			value = result[0]
-		}
+func (t Target) Matches(target Target) bool {
+	return t == target
+}
 
-		if newFiledName, ok := diffFields[fieldName]; ok {
-			fieldName = newFiledName
-		}
+type DiffFieldPair struct {
+	Origin  string
+	Targets []string
+}
 
-		if targetField, ok := toType.FieldByName(fieldName); ok {
-			if len(converters) > 0 {
-				_, hasResetFieldMethod := resetFieldMethods[fieldName]
+type CopyCommand interface {
+	CopyTo(toValue interface{}) error
+}
 
-				if !hasResetFieldMethod {
-					if targetField.Type != value.Type() {
-						for _, convert := range converters {
-							value = convert(value)
-						}
-					}
-				}
+func set(to, from reflect.Value) bool {
+	if from.IsValid() {
+		if to.Kind() == reflect.Ptr {
+			// set `to` to nil if from is nil
+			if from.Kind() == reflect.Ptr && from.IsNil() {
+				to.Set(reflect.Zero(to.Type()))
+				return true
+			} else if to.IsNil() {
+				to.Set(reflect.New(to.Type().Elem()))
 			}
+			to = to.Elem()
+		}
 
-			if value.Type().ConvertibleTo(targetField.Type) {
-				value = value.Convert(targetField.Type)
-				to.FieldByName(fieldName).Set(value)
+		if from.Type().ConvertibleTo(to.Type()) {
+			to.Set(from.Convert(to.Type()))
+		} else if scanner, ok := to.Addr().Interface().(sql.Scanner); ok {
+			err := scanner.Scan(from.Interface())
+			if err != nil {
+				return false
 			}
+		} else if from.Kind() == reflect.Ptr {
+			return set(to, from.Elem())
+		} else {
+			return false
 		}
 	}
+	return true
 }
 
 func indirect(reflectValue reflect.Value) reflect.Value {
@@ -83,4 +95,32 @@ func indirectType(reflectType reflect.Type) reflect.Type {
 		reflectType = reflectType.Elem()
 	}
 	return reflectType
+}
+
+func deepFields(reflectType reflect.Type) []reflect.StructField {
+	var fields []reflect.StructField
+
+	if reflectType = indirectType(reflectType); reflectType.Kind() == reflect.Struct {
+		for i := 0; i < reflectType.NumField(); i++ {
+			v := reflectType.Field(i)
+			if v.Anonymous {
+				fields = append(fields, deepFields(v.Type)...)
+			} else {
+				fields = append(fields, v)
+			}
+		}
+	}
+
+	return fields
+}
+
+func indirectAsNonNil(v reflect.Value) reflect.Value {
+	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			v.Set(reflect.New(v.Type().Elem()))
+		}
+		return indirectAsNonNil(v.Elem())
+	}
+
+	return v
 }
