@@ -294,9 +294,69 @@ TODO
 - 重试
 - 输出错误信息，结束程序
   - 需要注意的是，这种策略只应该在 main 中执行。对于库函数而言，应仅向上传播错误，除非该错误意味着程序内部包含不一致性，即遇到了 bug，才能在库函数中结束程序。
-- sdaf 
+- 仅输出错误信息，保持程序运行
+- 忽略错误
 
+### 匿名函数
 
+匿名函数可以访问完整的语法环境。
+
+```go
+func squares() func() int {
+    var x int
+    return func() int {
+        x++
+        return  x * x
+    }
+}
+
+func main(){
+    f := squares()
+    fmt.Println(f()) // "1"
+    fmt.Println(f()) // "4"
+    fmt.Println(f()) // "9"
+    fmt.Println(f()) // "16"
+}
+```
+
+在 squares 中定义的匿名内部函数可以访问和更新 squares 中的局部变量，这意味着匿名函数和 squares 中存在变量引用。这就是函数值属于引用类型和函数值不可比较的原因。
+
+该例子中，变量的生命周期不由它的作用域决定，squares 返回后，变量 x 仍然隐式的存在于 f 中。
+
+#### 警告：捕获迭代变量
+
+```go
+var rmdirs []func()
+for _, d := range tempDirs() {
+    os.MkdirAll(dir, 0755)
+    rmdirs = append(rmdirs, func() {
+        os.RemoveAll(dir) // NOTE: incorrect!
+    })
+}
+// ...do some work ...
+for _, rmdir := range rmdirs {
+    rmdir() // clean up
+}
+```
+
+上面的程序是错误的，for 循环语句引入了新的语法块，循环变量 dir 在这个语法块中被声明。在该循环中生成的所有函数值都共享相同的循环变量。函数值中记录的是循环变量的内存地址，，而不是循环变量某一时刻的值。
+
+这个问题不仅存在基于 range 的循环中，下面例子有同样的问题：
+
+```go
+var rmdirs []func()
+dirs := tempDirs()
+for i:= 0; i < len(dirs); i++ {
+    os.MkdirAll(dirs[i], 0755)
+    rmdirs = append(rmdirs, func() {
+        os.RemoveAll(dirs[i]) // NOTE: incorrect!
+    })
+}
+```
+
+### Deferred 函数
+
+defer 语句经常被用于处理成对的操作，如打开、关闭、连接、断开连接、加锁、释放锁。
 
 ## 方法
 
