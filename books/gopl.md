@@ -356,7 +356,49 @@ for i:= 0; i < len(dirs); i++ {
 
 ### Deferred 函数
 
+当 defer 语句被执行时，跟在 defer 后面的函数会被延迟执行。直到包含 该 defer 语句的函数执行完毕时，defer 后面的函数才会被执行，不论包含 defer 语句的函数是通过 return 正常结束，还是由于 panic 导致的异常结束。一个函数中可以执行多条 defer 语句，它们的执行顺序与声明顺序相反。
+
 defer 语句经常被用于处理成对的操作，如打开、关闭、连接、断开连接、加锁、释放锁。
+
+调试复杂程序时，defer 机制也常被用于记录何时进入和退出函数。
+
+```go
+func bigSlowOperation(){
+    defer trace("bigSlowOperation")() // don't forget the
+    extra parentheses
+    // ...lots of work...
+    time.Sleep(10 *  time.Second) // simulate slow
+    operation by sleeping
+}
+func trace(msg string) func() {
+    start := time.Now()
+    log.Printf("enter %s", msg)
+    return func() {
+        log.Printf("exit %s (%s)", msg, time.Since(start))
+    }
+}
+```
+
+上例中 bigSlowOperation 函数直接调用 trace 记录函数的被调情况。bigSlowOperation 被调时 trace 会返回一个函数值，该函数会在 bigSlowOperation 退出时被调用。
+
+defer 语句中函数会在 return 语句更新返回值变量后再执行，又因为在函数中定义匿名函数可以访问该函数包括返回值变量在内的所有变量，所以对匿名函数采用 defer 机制，可以使其观察函数的返回值，甚至修改函数返回给调用者的返回值。
+
+```go
+func double(x int) int {
+	return x + x
+}
+func triple(x int) (result int) {
+	defer func() { result += x }()
+	return double(x)
+}
+fmt.Println(triple(4)) // "12"
+```
+
+### Panic 异常
+
+在 Go 的 panic 机制中，延迟函数的调用在释放堆栈信息之前。
+
+### Recover 捕获异常
 
 ## 方法
 

@@ -326,7 +326,11 @@ PIC
 
 [go 圣经](https://chai2010.cn/advanced-go-programming-book/appendix/appendix-a-trap.html)
 
+## 风格
 
+### Panic
+
+虽然 Go 的 panic 机制类似于其他语言的异常，但是 panic 的适用场景有一些不同。由于 panic 会引起程序的崩溃，因此 panic 一般用于严重的错误，如程序内部的逻辑不一致，所以对应大部分漏洞，应该使用 Go 提供错误机制，而不是 panic，尽量避免程序的崩溃。在健壮的程序中，任何可以预料到的错误，如不正确的输入、错误的配置或是失败的 I/O 操作都应该被优雅的处理。
 
 ## defer
 
