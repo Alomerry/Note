@@ -400,9 +400,49 @@ fmt.Println(triple(4)) // "12"
 
 ### Recover 捕获异常
 
+不加区分的恢复所有的 panic 异常是不可取的。因为在 panic 之后，无法保证包级别变量的状态仍然和我们预期一致。比如对数据结构的一次重要更新没有被完整完成、文件或者网络连接没有被关闭、获得的锁没有被释放。
+
+不应该试图去恢复其他包引起的 panic，公有 API 应该将函数的运行失败作为 error 返回，而不是 panic。同样的，你也不应该恢复一个由他人开发的函数引起的 panic，比如说调用者传入的回调函数，因为无法确保这样是安全的。
+
+但有时很难完全遵循规范，例如 net/http 包中提供了一个 web 服务器，将收到的请求分发给用户提供的处理函数。不能因为某个处理函数引发的 panic 异常而 kill 整个进程；web 服务器遇到处理函数导致的 panic 时会调用 recover，输出堆栈信息，继续运行。这种做法在实践中很便捷，但是也会引起资源泄露，或是因为 recover 操作导致其他问题。
+
+基于以上原因，安全的做法是有选择性的 recover，只恢复应该被恢复的 panic 异常，此外这些异常所占的比例应该尽可能的低。为了标识某个 panic 是否应该被恢复，我们可以将 panic value 设置成特殊类型。在 recover 时对 panic value 进行检查，如果发现是特殊类型，就将 panic 作为 error 处理，如果不是则按照正常的 panic 进行处理。
+
+```go
+// soleTitle returns the text of the first non-empty title element
+// in doc, and an error if there was not exactly one.
+func soleTitle(doc *html.Node) (title string, err error) {
+	type bailout struct{}
+	defer func() {
+        switch p := recover(); p {
+        case nil: // no panic
+        case bailout{}: // "expected" panic
+        err = fmt.Errorf("multiple title elements")
+        default:
+        panic(p) // unexpected panic; carry on panicking
+	}
+}()
+	// Bail out of recursion if we find more than one nonempty title.
+    forEachNode(doc, func(n *html.Node) {
+        if n.Type == html.ElementNode && n.Data == "title" && n.FirstChild != nil {
+            if title != "" {
+                panic(bailout{}) // multiple titleelements
+            }
+            title = n.FirstChild.Data
+        }
+	}, nil)
+	if title == "" {
+        return "", fmt.Errorf("no title element")
+	}
+	return title, nil
+}
+```
+
 ## 方法
 
+### 基于指针的接收器
 
+> 如果命名类型T(译注：用type xxx定义的类型)的所有方法都是用T类型自己来做接收器(是 *T )，那么拷贝这种类型的实例就是安全的；调用他的任何一个方法也就会产生一个拷贝。比如time.Duration的这个类型，在调用其方法时就会被全部拷贝一份，包括在作数传入函数的时候。但是如果一个方法使用指针作为接收器，你需要避免对其进行拷贝为这样可能会破坏掉该类型内部的不变性。比如你对bytes.Buffer对象进行了拷贝，那么会引起原始对象和拷贝对象只是别名而已，但实际上其指向的对象是一致的。紧接着对后的变量进行修改可能会有让你意外的结果。译注： 作者这里说的比较绕，其实有两点：1. 不管你的method的receiver是指针类型还是非指针类型，都是可以通过指针/非指针进行调用的，编译器会帮你做类型转换。2. 在声明一个method的receiver该是指针还是非指针类型时，你需要考虑两方面的内一方面是这个对象本身是不是特别大，如果声明为非指针变量时，调用会产生一次贝；第二方面是如果你用指针类型作为receiver，那么你一定要注意，这种指针类型的始终是一块内存地址，就算你对其进行了拷贝。熟悉C或者C艹的人这里应该很快白。
 
 ## 接口
 
