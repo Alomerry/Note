@@ -16,6 +16,28 @@ https://zhuanlan.zhihu.com/p/25990989
 
 4c4de5ee6c893fad1f957245f7237d0385b31a1b
 
+
+
+https://gitlab.maiscrm.com/mai/tools/mongo-go-driver?go-get=1
+
+https://blog.sbw.so/u/use-git-credentials-auth-system.html
+
+https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%87%AD%E8%AF%81%E5%AD%98%E5%82%A8
+
+
+
+https://gocn.vip/topics/10478
+
+https://juejin.cn/post/6844903433846145038
+
+https://golang.cafe/blog/how-to-fix-go-mod-unknown-revision.html
+
+https://cloud.tencent.com/developer/article/1602151
+
+
+
+
+
 ## TransformExistFieldsByGetter
 
 ## log import
