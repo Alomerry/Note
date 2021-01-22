@@ -60,7 +60,11 @@ git pull
 git reset --soft HEAD^
 ```
 
+https://www.cnblogs.com/zhaoyingjie/p/10259715.html
 
+git reset --soft HEAD@{1}
+
+https://blog.csdn.net/hudashi/article/details/7664631/
 
 ## 本地仓库推送到多个远程仓库
 
