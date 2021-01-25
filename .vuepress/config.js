@@ -18,8 +18,30 @@ module.exports = {
                 title: '书籍笔记',
                 children: [
                     'books/cleanCode',
-                    // 'books/csapp',
+                    'books/csapp',
                     'books/gopl'
+                ]
+            },
+            {
+                title: '算法解析',
+                children: [
+                    'algorithm/note',
+                    'algorithm/leetcode',
+                    'algorithm/pat',
+                ]
+            },
+            {
+                title: '其它笔记',
+                children: [
+                    'custom/keyMap',
+                    'custom/note',
+                ]
+            },
+            {
+                title: '语言心得',
+                children: [
+                    'code/golang',
+                    'code/java',
                 ]
             },
             {
@@ -33,31 +55,6 @@ module.exports = {
                     'doc/redis',
                 ]
             },
-            {
-                title: '算法解析',
-                children: [
-                    'algorithm/note',
-                    'algorithm/leetcode',
-                    'algorithm/pat',
-                ]
-            },
-            {
-                title: '语言心得',
-                children: [
-                    'code/golang',
-                    'code/java',
-                ]
-            },
-            // {
-            //     title: '工作日志',
-            //     children: [
-            //         'mai/utils/doc',
-            //         'mai/utils/array',
-            //         'mai/utils/func',
-            //         'mai/utils/map',
-            //         'mai/utils/string',
-            //     ]
-            // },
         ]
     },
     markdown: {
