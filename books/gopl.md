@@ -463,7 +463,7 @@ func soleTitle(doc *html.Node) (title string, err error) {
 
 ## 接口
 
-
+Go 语言中接口类型的独特之处在于它是满足隐式实现的，即没有必要对于给定的具体类型定义所有满足的接口类型。
 
 ## Goroutines 和 Channels
 
