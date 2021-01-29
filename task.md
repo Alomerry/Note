@@ -83,3 +83,32 @@ ContainsAll
 ## ROOT
 
 sentinel
+
+elasticSearch
+
+```
+curl --location --request POST 'http://localhost:9200/local-portal-tenants-shared-product/product/5e996fbbe5c45542c146e644/_update' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+    "doc":{
+        "name" : "xxx",
+        "type" : "product",
+        
+    }
+}'
+```
+
+
+
+```
+curl --location --request GET 'http://localhost:9200/local-portal-tenants-shared-product/product/5d707d2361d6fa00a0736053?_source=name'
+```
+
+
+
+```
+curl --location --request GET 'http://localhost:9200/local-portal-tenants-shared-product/product/_count'
+```
+
+
+
