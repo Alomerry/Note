@@ -53,6 +53,7 @@ module.exports = {
                     'doc/git',
                     'doc/qmgo',
                     'doc/redis',
+                    'doc/grpc',
                 ]
             },
         ]

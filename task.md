@@ -112,3 +112,10 @@ curl --location --request GET 'http://localhost:9200/local-portal-tenants-shared
 
 
 
+## deepin install nodejs
+
+wget https://deb.nodesource.com/setup_14.x
+
+modify line209 DISTRO=$(lsb_release -c -s) to DISTRO=stable
+
+chmod +x ./setup_14.x
