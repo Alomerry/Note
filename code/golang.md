@@ -20,6 +20,10 @@ func xxx(a []string){
 
 如果你需要测试一个slice是否是空的，使用len(s) == 0来判断，而不应该用s == nil来判断。
 
+## Signal 包
+
+Notify 函数 https://blog.csdn.net/chuanglan/article/details/80750119
+
 ## flag 包
 
 ### os.Args
