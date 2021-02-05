@@ -392,6 +392,12 @@ func (bw *balancerWrapper) lbWatcher() {
 
 https://blog.csdn.net/ra681t58cjxsgckj31/article/details/110675344
 
+
+
+### gRPC 流程
+
+- 
+
 ### resolver
 
 当我们的服务刚刚成型时，可能一个服务只有一台实例，这时候client要建立grpc连接很简单，只需要指定server的ip就可以了。但是，当服务成熟了，业务量大了，这个时候，一个实例就就不够用了，我们需要部署一个服务集群。一个集群有很多实例，且可以随时的扩容，部分实例出现了故障也没关系，这样就提升了服务的处理能力和稳定性，但是也带来一个问题，grpc的client，如何和这个集群里的server建立连接？

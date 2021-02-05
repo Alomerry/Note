@@ -119,3 +119,5 @@ wget https://deb.nodesource.com/setup_14.x
 modify line209 DISTRO=$(lsb_release -c -s) to DISTRO=stable
 
 chmod +x ./setup_14.x
+
+正则

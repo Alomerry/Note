@@ -208,3 +208,53 @@ git push -f
 - 获取这个 commit 的提交信息：`git log --pretty=format:提交者：%an，提交时间：%ad，提交说明：%s <commit_id> -1`
 - 使用旧的提交信息：`git commit --author="<author>" --date="<date>" -m "<message>"`
 
+
+
+https://devblogs.microsoft.com/oldnewthing/20180312-00/?p=98215
+
+http://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html
+
+https://oschina.gitee.io/learn-git-branching/
+
+## 案例
+
+### 某个 MR 被 revert 了之后如何在此重建 MR 修改代码？
+
+git log 查看提交 mr 的 commit 的 hash 值
+
+```
+commit 90bd4af583c9d5c2876dd3fdc3eba97e4713a452 (HEAD -> develop)
+Author: Alomerry Wu <xxx@xxx.com>
+Date:   Tue Feb 2 13:30:14 2021 +0800
+
+    core: update grpc
+
+commit 4becc71f2e504c0960e77df4d01c846117ce4c94
+Author: Alomerry Wu <xxx@xxx.com>
+Date:   Tue Feb 2 13:30:00 2021 +0800
+
+    vendor: update grpc
+
+commit 67a320491052a781e8c7f53a094a20f4fc3ade34
+Merge: f2dd7dd23 b15b73788
+Author: xxx <xxx@xxx.com>
+Date:   Thu Feb 4 17:26:12 2021 +0800
+
+    Merge branch 'feat-xxx' into 'develop'
+    
+    xxx: xxx
+    
+    See merge request xxx!7402
+
+commit b15b73788feec28c8906dd0d61dc737b77b6017e
+```
+
+此时 4becc71f2e504c0960e77df4d01c846117ce4c94 和 90bd4af583c9d5c2876dd3fdc3eba97e4713a452 是想要提交新 MR 的 commit
+
+git checkout 67a320491052a781e8c7f53a094a20f4fc3ade34
+
+git checkout -b feat-grpc
+
+git cherry-pick 4becc71f2e504c0960e77df4d01c846117ce4c94 90bd4af583c9d5c2876dd3fdc3eba97e4713a452
+
+git push --set-up stream orgin feat-grpc
