@@ -396,7 +396,23 @@ https://blog.csdn.net/ra681t58cjxsgckj31/article/details/110675344
 
 ### gRPC 流程
 
-- 
+#### Dial 流程
+
+- 调用 DialContext
+
+  - `cc.parsedTarget = grpcutil.ParseTarget(cc.target, cc.dopts.copts.Dialer != nil)` 根据传入的 target 选择 resolver
+  - 调用 getResolver，使用 parsedTarget 中的 scheme 去 clientConn 和注册过的 resolver 中查找 builder。
+  
+- `rWrapper, err := newCCResolverWrapper(cc, resolverBuilder)` 在这步使用  builder 的 build 方法构建 resolver 
+
+#### fileResolver 流程
+
+- 创建 watcher 协程，并阻塞等待操作系统信号，或 context 关闭。
+  - 接收到系统信号后，会读取并解析  `/etc/containerpilot/services.json` 文件中的活跃服务端节点列表。
+  - 对比 resolver 中记录的活跃节点，查找出新节点和失效节点，调用 UpdateState 进行更新。
+    - ResolverWrapper 中调用  updateResolverState
+      - 首次进入 updateResolverState 方法会初始化 balanceWarpper，调用 maybeApplyDefaultServiceConfig 后调用 applyServiceConfigAndBalancer。
+      - 调用 updateClientConnState
 
 ### resolver
 

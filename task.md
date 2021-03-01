@@ -16,7 +16,7 @@ https://zhuanlan.zhihu.com/p/25990989
 
 4c4de5ee6c893fad1f957245f7237d0385b31a1b
 
-
+copier 支持卸载
 
 https://gitlab.maiscrm.com/mai/tools/mongo-go-driver?go-get=1
 
