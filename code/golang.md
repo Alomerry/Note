@@ -2,23 +2,23 @@
 
 func main(){
 
-​	a := []string{xxx}
+​ a := []string{xxx}
 
-   xxx(a)
+xxx(a)
 
-   a 未改变？
+a 未改变？
 
 }
 
 func xxx(a []string){
 
- a = []string{xxx} ? append
+a = []string{xxx} ? append
 
 }
 
 ## Slice
 
-如果你需要测试一个slice是否是空的，使用len(s) == 0来判断，而不应该用s == nil来判断。
+如果你需要测试一个 slice 是否是空的，使用 len(s) == 0 来判断，而不应该用 s == nil 来判断。
 
 ## Signal 包
 
@@ -47,8 +47,6 @@ arg[1]=[os.Args]
 arg[2]=[demo]
 ```
 
-
-
 ```go
 // A Flag represents the state of a flag.
 type Flag struct {
@@ -58,8 +56,6 @@ type Flag struct {
 	DefValue string // default value (as text); for usage message
 }
 ```
-
-
 
 ```go
 // A FlagSet represents a set of defined flags. The zero value of a FlagSet
@@ -113,7 +109,7 @@ type MyInt = int
 func main() {
     var a NewInt
     var b MyInt
-    
+
     fmt.Printf("type of a:%T\n", a) //type of a:main.NewInt
     fmt.Printf("type of b:%T\n", b) //type of b:int
 }
@@ -131,11 +127,7 @@ Go 是一门强类型静态语言。强类型意味着类型一旦定义了就�
 
 > 如果 Type1 与 Type2 一样大，并且两者有相同的内存结构；那么就允许把一个类型的数据，重新定义成另一个类型的数据。
 
-
-
 #### 处理系统调用
-
-
 
 4 个规则
 
@@ -144,15 +136,13 @@ Go 是一门强类型静态语言。强类型意味着类型一旦定义了就�
 - `uintptr`可以转换为 `unsafe.Pointer`
 - `unsafe.Pointer` 可以转换为 `uintptr`
 
-
-
 ## 克隆 深浅拷贝
 
-[golang通过反射克隆数据](https://studygolang.com/articles/26514)
+[golang 通过反射克隆数据](https://studygolang.com/articles/26514)
 
-[Golang之情非得已的DeepCopy](https://www.jianshu.com/p/f1cdb1bc1b74)
+[Golang 之情非得已的 DeepCopy](https://www.jianshu.com/p/f1cdb1bc1b74)
 
-[Go语言如何深度拷贝对象](https://studygolang.com/articles/6984)
+[Go 语言如何深度拷贝对象](https://studygolang.com/articles/6984)
 
 ## Context
 
@@ -162,11 +152,11 @@ https://gitlab.********.com/mai/********/issues/24
 
 context 只读
 
-[Go Context的踩坑经历](https://studygolang.com/articles/12566)
+[Go Context 的踩坑经历](https://studygolang.com/articles/12566)
 
 [gRPC and Deadlines](https://gitlab.********.com/mai/********/issues/24)
 
-###  Context 接口
+### Context 接口
 
 ```go
 type Context interface {
@@ -184,20 +174,20 @@ type Context interface {
 }
 ```
 
-- `Done`会返回一个channel，当该context被取消的时候，该channel会被关闭，同时对应的使用该context的routine也应该结束并返回。
-- `Context`中的方法是协程安全的，这也就代表了在父routine中创建的context，可以传递给任意数量的routine并让他们同时访问。
-- `Deadline`会返回一个超时时间，routine获得了超时时间后，可以对某些io操作设定超时时间。
-- `Value`可以让routine共享一些数据，当然获得数据是协程安全的。
+- `Done`会返回一个 channel，当该 context 被取消的时候，该 channel 会被关闭，同时对应的使用该 context 的 routine 也应该结束并返回。
+- `Context`中的方法是协程安全的，这也就代表了在父 routine 中创建的 context，可以传递给任意数量的 routine 并让他们同时访问。
+- `Deadline`会返回一个超时时间，routine 获得了超时时间后，可以对某些 io 操作设定超时时间。
+- `Value`可以让 routine 共享一些数据，当然获得数据是协程安全的。
 
-在请求处理的过程中，会调用各层的函数，每层的函数会创建自己的routine，是一个routine树。所以，context也应该反映并实现成一棵树。
+在请求处理的过程中，会调用各层的函数，每层的函数会创建自己的 routine，是一个 routine 树。所以，context 也应该反映并实现成一棵树。
 
-要创建context树，第一步是要有一个根结点。`context.Background`函数的返回值是一个空的context，经常作为树的根结点，它一般由接收请求的第一个routine创建，不能被取消、没有值、也没有过期时间。
+要创建 context 树，第一步是要有一个根结点。`context.Background`函数的返回值是一个空的 context，经常作为树的根结点，它一般由接收请求的第一个 routine 创建，不能被取消、没有值、也没有过期时间。
 
 ```go
 func Background() Context
 ```
 
-之后该怎么创建其它的子孙节点呢？context包为我们提供了以下函数：
+之后该怎么创建其它的子孙节点呢？context 包为我们提供了以下函数：
 
 ```go
 func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
@@ -206,15 +196,15 @@ func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
 func WithValue(parent Context, key interface{}, val interface{}) Context
 ```
 
-这四个函数的第一个参数都是父context，返回一个Context类型的值，这样就层层创建出不同的节点。子节点是从复制父节点得到的，并且根据接收的函数参数保存子节点的一些状态值，然后就可以将它传递给下层的routine了。
+这四个函数的第一个参数都是父 context，返回一个 Context 类型的值，这样就层层创建出不同的节点。子节点是从复制父节点得到的，并且根据接收的函数参数保存子节点的一些状态值，然后就可以将它传递给下层的 routine 了。
 
-`WithCancel`函数，返回一个额外的CancelFunc函数类型变量，该函数类型的定义为：
+`WithCancel`函数，返回一个额外的 CancelFunc 函数类型变量，该函数类型的定义为：
 
 ```go
 type CancelFunc func()
 ```
 
-调用CancelFunc对象将撤销对应的Context对象，这样父结点的所在的环境中，获得了撤销子节点context的权利，当触发某些条件时，可以调用CancelFunc对象来终止子结点树的所有routine。在子节点的routine中，需要用类似下面的代码来判断何时退出routine：
+调用 CancelFunc 对象将撤销对应的 Context 对象，这样父结点的所在的环境中，获得了撤销子节点 context 的权利，当触发某些条件时，可以调用 CancelFunc 对象来终止子结点树的所有 routine。在子节点的 routine 中，需要用类似下面的代码来判断何时退出 routine：
 
 ```go
 select {
@@ -223,11 +213,11 @@ select {
 }
 ```
 
-根据cxt.Done()判断是否结束。当顶层的Request请求处理结束，或者外部取消了这次请求，就可以cancel掉顶层context，从而使整个请求的routine树得以退出。
+根据 cxt.Done()判断是否结束。当顶层的 Request 请求处理结束，或者外部取消了这次请求，就可以 cancel 掉顶层 context，从而使整个请求的 routine 树得以退出。
 
-`WithDeadline`和`WithTimeout`比`WithCancel`多了一个时间参数，它指示context存活的最长时间。如果超过了过期时间，会自动撤销它的子context。所以context的生命期是由父context的routine和`deadline`共同决定的。
+`WithDeadline`和`WithTimeout`比`WithCancel`多了一个时间参数，它指示 context 存活的最长时间。如果超过了过期时间，会自动撤销它的子 context。所以 context 的生命期是由父 context 的 routine 和`deadline`共同决定的。
 
-`WithValue`返回parent的一个副本，该副本保存了传入的key/value，而调用Context接口的Value(key)方法就可以得到val。注意在同一个context中设置key/value，若key相同，值会被覆盖。
+`WithValue`返回 parent 的一个副本，该副本保存了传入的 key/value，而调用 Context 接口的 Value(key)方法就可以得到 val。注意在同一个 context 中设置 key/value，若 key 相同，值会被覆盖。
 
 ### 原理
 
@@ -255,13 +245,13 @@ func (c *valueCtx) Value(key interface{}) interface{} {
 }
 ```
 
-context上下文数据的存储就像一个树，每个结点只存储一个key/value对。`WithValue()`保存一个key/value对，它将父context嵌入到新的子context，并在节点中保存了key/value数据。`Value()`查询key对应的value数据，会从当前context中查询，如果查不到，会递归查询父context中的数据。
+context 上下文数据的存储就像一个树，每个结点只存储一个 key/value 对。`WithValue()`保存一个 key/value 对，它将父 context 嵌入到新的子 context，并在节点中保存了 key/value 数据。`Value()`查询 key 对应的 value 数据，会从当前 context 中查询，如果查不到，会递归查询父 context 中的数据。
 
-值得注意的是，**context中的上下文数据并不是全局的，它只查询本节点及父节点们的数据，不能查询兄弟节点的数据。**
+值得注意的是，**context 中的上下文数据并不是全局的，它只查询本节点及父节点们的数据，不能查询兄弟节点的数据。**
 
-#### 手动cancel和超时cancel
+#### 手动 cancel 和超时 cancel
 
-`cancelCtx`中嵌入了父Context，实现了canceler接口：
+`cancelCtx`中嵌入了父 Context，实现了 canceler 接口：
 
 ```go
 type cancelCtx struct {
@@ -280,7 +270,7 @@ type canceler interface {
 }
 ```
 
-`cancelCtx`结构体中`children`保存它的所有`子canceler`， 当外部触发cancel时，会调用`children`中的所有`cancel()`来终止所有的`cancelCtx`。`done`用来标识是否已被cancel。当外部触发cancel、或者父Context的channel关闭时，此done也会关闭。
+`cancelCtx`结构体中`children`保存它的所有`子canceler`， 当外部触发 cancel 时，会调用`children`中的所有`cancel()`来终止所有的`cancelCtx`。`done`用来标识是否已被 cancel。当外部触发 cancel、或者父 Context 的 channel 关闭时，此 done 也会关闭。
 
 ```go
 type timerCtx struct {
@@ -316,15 +306,11 @@ func WithDeadline(parent Context, deadline time.Time) (Context, CancelFunc) {
 
 PIC
 
-可以看出，**cancelCtx也是一棵树，当触发cancel时，会cancel本结点和其子树的所有cancelCtx**。
+可以看出，**cancelCtx 也是一棵树，当触发 cancel 时，会 cancel 本结点和其子树的所有 cancelCtx**。
 
 ## 空 interface type
 
-
-
 ## map
-
-
 
 ## 常见坑
 
@@ -340,13 +326,9 @@ PIC
 
 [深入理解 Go defer](https://segmentfault.com/a/1190000019303572)
 
-
-
-##  竞争条件
+## 竞争条件
 
 [竞争条件](https://books.studygolang.com/gopl-zh/ch9/ch9-01.html)
-
-
 
 ## GC
 
@@ -354,3 +336,21 @@ PIC
 
 ## 方法的结构指针接收者和结构值接收者
 
+## 时间输出
+
+go 1.13.4 源码中的注释如下：
+
+```go
+stdFracSecond0  // ".0", ".00", ... , trailing zeros included
+stdFracSecond9  // ".9", ".99", ..., trailing zeros omitted
+```
+
+```go
+...
+case stdFracSecond0:  // stdFracSecond0 requires the exact number of digits as specified in the layout.
+...
+case stdFracSecond9:  // Take any number of digits, even more than asked for, because it is what the stdSecond case would do.
+...
+```
+
+`.9` 可以适配任意长度的毫秒，`.0` 需要保持位数一致。
