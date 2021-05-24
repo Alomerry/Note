@@ -342,3 +342,30 @@ db.getCollection('collectionName1')
 print('update count:' + needToUpdate.length);
 print('delete count:' + needToDelete.length);
 ```
+
+```
+db.getCollection('ec.storeMember').aggregate([
+    {"$match":{"accountId": ObjectId("5e7872a773ee1200fb1bec32")}},
+    {
+        "$redact":{
+            "$cond":{
+                "if":{
+                    "$or":[
+                        "$stores",
+                        {
+                            "$and":[
+                                {"$in":["$relation",["touched","served"]]},
+                                {"$lt":["$updatedAt",ISODate("2021-05-20T08:26:26.773Z")]},
+                                {"$gt":["$updatedAt",ISODate("2021-04-20T08:26:26.773Z")]}
+                            ]
+                        }
+                    ]
+                },
+                "then":"$$DESCEND",
+                "else":"$$PRUNE",
+            }
+        }
+    },
+    {"$match":{"stores":{"$ne":[]}}}
+])
+```
