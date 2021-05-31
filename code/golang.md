@@ -354,3 +354,5 @@ case stdFracSecond9:  // Take any number of digits, even more than asked for, be
 ```
 
 `.9` 可以适配任意长度的毫秒，`.0` 需要保持位数一致。
+
+## golang 读取文件性能对比

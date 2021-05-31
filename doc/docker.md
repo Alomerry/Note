@@ -9,11 +9,14 @@ dpkg -l | grep docker
 sudo apt remove --purge dock.ec
 ```
 
-## docker 避免一直sudo
+## docker 避免一直 sudo
 
 `sudo groupadd docker`创建 组
 
-`sudo gpasswd -a ${USER} docker`将用户添加到该 组，例如xxx用户
+`sudo gpasswd -a ${USER} docker`将用户添加到该 组，例如 xxx 用户
 
-`sudo systemctl restart docker`重启docker-daemon
+`sudo systemctl restart docker`重启 docker-daemon
 
+## 拷贝容器文件到宿主机
+
+`docker cp <containerId>:<fileName> <hostPath>`

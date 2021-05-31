@@ -2,21 +2,19 @@
 
 ## 删除 Git 中的历史文件或敏感信息
 
-Git 仓库中每一个修改都会保存记录，所以如果仅仅是删除敏感信息，然后commit，那么那个敏感信息至少会在两个历史commit里面出现，也就是出现和删除的两次commit，可以使用以下命令搜索：
+Git 仓库中每一个修改都会保存记录，所以如果仅仅是删除敏感信息，然后 commit，那么那个敏感信息至少会在两个历史 commit 里面出现，也就是出现和删除的两次 commit，可以使用以下命令搜索：
 
-`git log -S 'sensitive string' -p --all `
+`git log -S 'sensitive string' -p --all`
 
 https://git-scm.com/docs/git-filter-branch
 
-
-
 ### 重写历史 commit
 
-例如将代码中的 alomerry 全部替换成 ********
+例如将代码中的 alomerry 全部替换成 **\*\*\*\***
 
-`git filter-branch -f --tree-filter 'find . -type f ! -path "./.git*" -exec sed -i "s/admin888/********/g" {} \;' HEAD  --all`
+`git filter-branch -f --tree-filter 'find . -type f ! -path "./.git*" -exec sed -i "s/admin888/********/g" {} \;' HEAD --all`
 
-*无论使用 rebase 还是 filter-branch，都会在本地 reflog 里面留下一下信息可以回溯到修改之前的状态，但是reflog是可以清空的，而且不会随着 push 传输到远程仓库的，可以放心使用。*
+_无论使用 rebase 还是 filter-branch，都会在本地 reflog 里面留下一下信息可以回溯到修改之前的状态，但是 reflog 是可以清空的，而且不会随着 push 传输到远程仓库的，可以放心使用。_
 
 ### 清空 reflog
 
@@ -30,8 +28,6 @@ git gc --prune=now
 
 `git push --force --all`
 
-
-
 ### 删除文件
 
 ```shel
@@ -40,19 +36,15 @@ git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch *.go'
 
 - `--prune-empty` 表示如果修改后的提交如果为空则扔掉不要
 
-> *Some kinds of filters will generate empty commits that leave the tree untouched. This switch allows* `git-filter-branch` *to ignore such commits …*
-
-
+> _Some kinds of filters will generate empty commits that leave the tree untouched. This switch allows_ `git-filter-branch` _to ignore such commits …_
 
 ## 强制同步远程分支
 
 ```shell
 git fetch --all
 git reset --hard origin/develop
-git pull 
+git pull
 ```
-
-
 
 ## 撤销 commit
 
@@ -78,8 +70,6 @@ git push origin
 git push alomerry
 ```
 
-
-
 ### 使用 git remote set-url add 命令
 
 ```shell
@@ -87,8 +77,6 @@ git remote set-url --add origin <url>
 
 git push origin
 ```
-
-
 
 `git remote set-url --add origin` 就是在当前 git 项目的 config 文件中增加一行记录。
 
@@ -116,7 +104,7 @@ git push origin
 使用 `git remote -v` 查看当前仓库的远程分支信息：
 
 ```shell
-git remote -v                                                  
+git remote -v
 origin	git@github.com:Alomerry/Note.git (fetch)
 origin	git@github.com:Alomerry/Note.git (push)
 origin	git@gitee.com:alomerry/Note.git (push)
@@ -125,7 +113,7 @@ origin	git@gitee.com:alomerry/Note.git (push)
 使用 `git push` 可以看到：
 
 ```shell
-git push                                                       
+git push
 Enumerating objects: 7, done.
 Counting objects: 100% (7/7), done.
 Delta compression using up to 6 threads
@@ -146,13 +134,13 @@ To gitee.com:alomerry/Note.git
    896e0ca..dd63a8b  develop -> develop
 ```
 
+## Git 撤销某个提交的文件的变动
 
+`git checkout <branchId / commitId> <fileName>`
 
 ## 修改全局属性
 
 `git config --global user.email "alomerry@hotmail.com"`
-
-
 
 ## ssh-keygen
 
@@ -176,17 +164,15 @@ https://blog.csdn.net/hudashi/article/details/7664631/
 
 `git rebase develop`
 
-
-
 当'mywork'分支更新之后，它会指向这些新创建的提交(commit),而那些老的提交会被丢弃。 如果运行垃圾收集命令(pruning garbage collection), 这些被丢弃的提交就会删除. （请查看 git gc)
 
 二、解决冲突
 
-在rebase的过程中，也许会出现冲突(conflict). 在这种情况，Git会停止rebase并会让你去解决 冲突；在解决完冲突后，用"git-add"命令去更新这些内容的索引(index), 然后，你无需执行 git-commit,只要执行:
+在 rebase 的过程中，也许会出现冲突(conflict). 在这种情况，Git 会停止 rebase 并会让你去解决 冲突；在解决完冲突后，用"git-add"命令去更新这些内容的索引(index), 然后，你无需执行 git-commit,只要执行:
 
 $ git rebase --continue
 
-这样git会继续应用(apply)余下的补丁。
+这样 git 会继续应用(apply)余下的补丁。
 
 git push -f
 
@@ -194,7 +180,7 @@ git push -f
 
 找到远程提交的 commit 哈希值后 `git checkout -b <hash code>`，然后 `git checkout -b <new branch>` 后重新 push origin
 
-## clone 获取指定指定分支的指定commit版本
+## clone 获取指定指定分支的指定 commit 版本
 
 第一步： git clone [git-url] -b [branch-name]
 
@@ -207,8 +193,6 @@ git push -f
 - 移除不需要的文件，`git checkout <file_name>`
 - 获取这个 commit 的提交信息：`git log --pretty=format:提交者：%an，提交时间：%ad，提交说明：%s <commit_id> -1`
 - 使用旧的提交信息：`git commit --author="<author>" --date="<date>" -m "<message>"`
-
-
 
 https://devblogs.microsoft.com/oldnewthing/20180312-00/?p=98215
 
@@ -241,9 +225,9 @@ Author: xxx <xxx@xxx.com>
 Date:   Thu Feb 4 17:26:12 2021 +0800
 
     Merge branch 'feat-xxx' into 'develop'
-    
+
     xxx: xxx
-    
+
     See merge request xxx!7402
 
 commit b15b73788feec28c8906dd0d61dc737b77b6017e

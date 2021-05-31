@@ -309,10 +309,10 @@ db.grantRolesToUser ( "root", [ { role: "__system", db: "admin" } ] )
 ```js
 var needToUpdate = [];
 var needToDelete = [];
-db.getCollection('collectionName1')
+db.getCollection('ec.storeMemberHistory')
   .aggregate([
     {
-      $match: { accountId: ObjectId('xxx'), isDeleted: false },
+      $match: { accountId: ObjectId('601b460bc2d05c5b770b04e8') },
     },
     {
       $lookup: { from: 'member', localField: 'memberId', foreignField: '_id', as: 'member' },
@@ -321,26 +321,42 @@ db.getCollection('collectionName1')
       $match: { $or: [{ 'member.isDeleted': true }, { member: { $size: 0 } }] },
     },
   ])
-  .forEach(function (storeMember) {
+  .forEach(function (history) {
     var hasMergeHistory = false;
-    db.getCollection('collectionName2')
+    db.getCollection('memberMergeHistory')
       .aggregate([
         {
-          $match: { accountId: ObjectId('xxx'), mergedMemberIds: { $in: [storeMember.memberId] } },
+          $match: { accountId: ObjectId('601b460bc2d05c5b770b04e8'), mergedMemberIds: { $in: [history.memberId] } },
         },
       ])
       .forEach(function (mergeHistory) {
         hasMergeHistory = true;
+        db.getCollection('ec.storeMemberHistory')
+          .find({
+            accountId: ObjectId('601b460bc2d05c5b770b04e8'),
+            memberId: history.memberId,
+          })
+          .forEach(function (doc) {
+            db.getCollection('ec.storeMemberHistory').update(
+              { _id: doc._id },
+              { $set: { memberId: mergeHistory.mainMemberId } }
+            );
+          });
       });
     if (hasMergeHistory) {
-      needToUpdate.push(storeMember.memberId);
+      needToUpdate.push(history.memberId);
     } else {
-      needToDelete.push(storeMember.memberId);
+      needToDelete.push(history.memberId);
     }
   });
-
-print('update count:' + needToUpdate.length);
-print('delete count:' + needToDelete.length);
+needToDelete.forEach(function (memberId) {
+  db.getCollection('ec.storeMemberHistory').remove({
+    accountId: ObjectId('601b460bc2d05c5b770b04e8'),
+    memberId: memberId,
+  });
+});
+print('need update count:' + needToUpdate.length);
+print('need delete count:' + needToDelete.length);
 ```
 
 ```
@@ -369,3 +385,5 @@ db.getCollection('ec.storeMember').aggregate([
     {"$match":{"stores":{"$ne":[]}}}
 ])
 ```
+
+/exportMongodbData --collection=ec.storeMember --pretty --query='{ "accountId" : {"$oid":"601b460bc2d05c5b770b04e8"}, "isDeleted": false ,"createdAt" : {"$gt":{"$date":"2021-01-01T01:09:28.810Z"}}}' --type=json portal-tenants-tongrentang
