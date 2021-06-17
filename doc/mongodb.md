@@ -306,57 +306,116 @@ db.grantRolesToUser ( "root", [ { role: "__system", db: "admin" } ] )
 
 ## mongodb shell script
 
-```js
-var needToUpdate = [];
-var needToDelete = [];
-db.getCollection('ec.storeMemberHistory')
-  .aggregate([
+```
+var needToUpdate = []
+var needToDelete = []
+db.getCollection('ec.storeMemberHistory').aggregate([
     {
-      $match: { accountId: ObjectId('601b460bc2d05c5b770b04e8') },
+        "$match": { "accountId" : ObjectId("5964866695ee5651741a91a2")}
     },
     {
-      $lookup: { from: 'member', localField: 'memberId', foreignField: '_id', as: 'member' },
+        "$lookup": { "from" : "member", "localField": "memberId", "foreignField": "_id", "as": "member"}
     },
     {
-      $match: { $or: [{ 'member.isDeleted': true }, { member: { $size: 0 } }] },
-    },
-  ])
-  .forEach(function (history) {
-    var hasMergeHistory = false;
-    db.getCollection('memberMergeHistory')
-      .aggregate([
-        {
-          $match: { accountId: ObjectId('601b460bc2d05c5b770b04e8'), mergedMemberIds: { $in: [history.memberId] } },
-        },
-      ])
-      .forEach(function (mergeHistory) {
-        hasMergeHistory = true;
-        db.getCollection('ec.storeMemberHistory')
-          .find({
-            accountId: ObjectId('601b460bc2d05c5b770b04e8'),
-            memberId: history.memberId,
-          })
-          .forEach(function (doc) {
-            db.getCollection('ec.storeMemberHistory').update(
-              { _id: doc._id },
-              { $set: { memberId: mergeHistory.mainMemberId } }
-            );
-          });
-      });
-    if (hasMergeHistory) {
-      needToUpdate.push(history.memberId);
-    } else {
-      needToDelete.push(history.memberId);
+        "$match": {"$or":[{"member.isDeleted":true},{"member":{"$size":0}}]}
     }
+]).forEach(function(history){
+    var hasMergeHistory = false;
+    db.getCollection('memberMergeHistory').aggregate([
+        {
+            "$match": { "accountId" : ObjectId("5964866695ee5651741a91a2"),"mergedMemberIds" : {"$in":[history.memberId]} }
+        },
+    ]).forEach(function(mergeHistory){
+        hasMergeHistory = true;
+        db.getCollection('ec.storeMemberHistory').find({
+                "accountId" : ObjectId("5964866695ee5651741a91a2"),
+                "memberId": history.memberId
+        }).forEach(function(doc){
+             db.getCollection('ec.storeMemberHistory').update({_id:doc._id},{"$set": { "memberId" : mergeHistory.mainMemberId}})
+        })
+    })
+    if (hasMergeHistory){
+        needToUpdate.push(history.memberId);
+    } else{
+        needToDelete.push(history.memberId);
+    }
+})
+needToDelete.forEach(function(memberId){
+    db.getCollection('ec.storeMemberHistory').remove({
+        "accountId" : ObjectId("5964866695ee5651741a91a2"),
+        "memberId" : memberId
+    })
+})
+print("need update count:" + needToUpdate.length)
+print("need delete count:" + needToDelete.length)
+```
+
+```
+var needToUpdate = []
+var needToDelete = []
+db.getCollection('ec.storeMember').aggregate([
+    {
+        "$match": { "accountId" : ObjectId("5964866695ee5651741a91a2"), "isDeleted": false }
+    },
+    {
+        "$lookup": { "from" : "member", "localField": "memberId", "foreignField": "_id", "as": "member"}
+    },
+    {
+        "$match": {"$or":[{"member.isDeleted":true},{"member":{"$size":0}}]}
+    }
+]).forEach(function(storeMember){
+    var hasMergeHistory = false;
+    db.getCollection('memberMergeHistory').aggregate([
+        {
+            "$match": { "accountId" : ObjectId("5964866695ee5651741a91a2"),"mergedMemberIds" : {"$in":[storeMember.memberId]} }
+        },
+    ]).forEach(function(mergeHistory){
+        hasMergeHistory = true;
+        db.getCollection('ec.storeMember').find({
+                "accountId" : ObjectId("5964866695ee5651741a91a2"),
+                "memberId": storeMember.memberId,
+                "isDeleted": false
+        }).forEach(function(doc){
+             db.getCollection('ec.storeMember').update({_id:doc._id},{"$set": { "memberId" : mergeHistory.mainMemberId}})
+        })
+    })
+    if (hasMergeHistory){
+        needToUpdate.push(storeMember.memberId);
+    } else{
+        needToDelete.push(storeMember.memberId);
+    }
+})
+needToDelete.forEach(function(memberId){
+    db.getCollection('ec.storeMember').update({
+        "accountId" : ObjectId("5964866695ee5651741a91a2"),
+        "memberId" : memberId
+    },{"$set": { "isDeleted" : true}})
+})
+
+print("update count:" + needToUpdate.length)
+print("delete count:" + needToDelete.length)
+```
+
+```
+db.getCollection('ec.storeMemberHistory').aggregate([
+    { "$match": { "accountId": ObjectId('5e7872a773ee1200fb1bec32'), "relation": "bound" } },
+    { "$sort": { "createdAt": -1 } },
+    { "$group": {
+        "_id": { "storeId": "$storeId", "staffId": "$staffId", "memberId": "$memberId" },
+        "createdAt": { "$first": "$createdAt" },
+      },
+    },
+  ]).forEach(function (history) {
+    db.getCollection('ec.storeMember').update(
+      {
+        "accountId": ObjectId('5e7872a773ee1200fb1bec32'),
+        "memberId": history._id.memberId,
+        "isDeleted": false,
+        "stores": { "$elemMatch": { "staffId": history._id.staffId, "storeId": history._id.storeId } },
+      },
+      { "$set": { "stores.$.boundAt": history.createdAt } }
+    );
   });
-needToDelete.forEach(function (memberId) {
-  db.getCollection('ec.storeMemberHistory').remove({
-    accountId: ObjectId('601b460bc2d05c5b770b04e8'),
-    memberId: memberId,
-  });
-});
-print('need update count:' + needToUpdate.length);
-print('need delete count:' + needToDelete.length);
 ```
 
 ```
