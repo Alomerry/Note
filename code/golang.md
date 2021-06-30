@@ -2,7 +2,7 @@
 
 func main(){
 
-​ a := []string{xxx}
+ a := []string{xxx}
 
 xxx(a)
 
@@ -356,3 +356,18 @@ case stdFracSecond9:  // Take any number of digits, even more than asked for, be
 `.9` 可以适配任意长度的毫秒，`.0` 需要保持位数一致。
 
 ## golang 读取文件性能对比
+
+
+
+## GVM 安装 Golang
+
+```shell
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+```
+
+```shell
+gvm install go1.4
+gvm use go1.4 [--default]
+```
+
+[gvm]([GitHub - moovweb/gvm: Go Version Manager](https://github.com/moovweb/gvm))
