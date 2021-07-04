@@ -31,3 +31,22 @@ netstat -<option> | grep <port>
 - -n 拒绝显示别名，能显示数字的全部转化为数字
 - -l 仅列出在 Listen（监听）的服务状态
 - -p 显示建立相关链接的程序名
+
+## 解决ssh连接长时间不操作断开连接的问题
+
+通过ssh连上服务器后，一段时间不操作，就会自动中断，并报出以下信息：
+
+client_loop: send disconnect: Broken pipe
+这带来很大的困扰，过一会就要重新连接，之前的临时环境变量也会丢失。
+
+配置~/.ssh/config文件，增加以下内容即可：
+
+```bash
+Host *
+        # 断开时重试连接的次数
+        ServerAliveCountMax 5
+
+        # 每隔5秒自动发送一个空的请求以保持连接
+        ServerAliveInterval 5
+```
+
