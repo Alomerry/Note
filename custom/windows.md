@@ -5,3 +5,4 @@ WSL2 设置代理
 ```bash
 export ALL_PROXY="http://$host_ip:7890"
 ```
+

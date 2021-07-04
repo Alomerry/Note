@@ -2,7 +2,7 @@
 
 func main(){
 
- a := []string{xxx}
+a := []string{xxx}
 
 xxx(a)
 
@@ -357,8 +357,6 @@ case stdFracSecond9:  // Take any number of digits, even more than asked for, be
 
 ## golang 读取文件性能对比
 
-
-
 ## GVM 安装 Golang
 
 ```shell
@@ -371,3 +369,7 @@ gvm use go1.4 [--default]
 ```
 
 [gvm]([GitHub - moovweb/gvm: Go Version Manager](https://github.com/moovweb/gvm))
+
+## go install
+
+http://c.biancheng.net/view/122.html
