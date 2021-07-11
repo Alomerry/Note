@@ -18,3 +18,21 @@ cat /root/.ssh/id_rsa.pub
 
 搭建 v2ray
 
+安装 maven
+访问 https://downloads.apache.org/maven/maven-3/ download
+tar zxvf apache-maven-<version>-bin.tar.gz
+sudo mv apache-maven-<version>/ /opt/apache-maven-<version>/
+
+安装 jdk
+sudo apt-get install openjdk-8-jdk
+export M2_HOME=/opt/maven/apache-maven-3.6.3
+export CLASSPATH=$CLASSPATH:$M2_HOME/lib
+export PATH=$PATH:$M2_HOME/bin
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+
+ps -aux | grep spring-boot:run
+

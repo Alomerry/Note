@@ -10,8 +10,6 @@ COMMAND   PID USER   FD   TYPE   DEVICE SIZE/OFF NODE NAME
 nodejs  26993 root  10u   IPv4 37999514      0t0  TCP *:8000 (LISTEN)
 ```
 
-
-
 - COMMAND 进程名称
 - PID 进程标识符
 - USER 进程所有者
@@ -32,14 +30,24 @@ netstat -<option> | grep <port>
 - -l 仅列出在 Listen（监听）的服务状态
 - -p 显示建立相关链接的程序名
 
+<<<<<<< HEAD
 ## 解决ssh连接长时间不操作断开连接的问题
 
 通过ssh连上服务器后，一段时间不操作，就会自动中断，并报出以下信息：
+=======
+## 解决 ssh 连接长时间不操作断开连接的问题
+
+通过 ssh 连上服务器后，一段时间不操作，就会自动中断，并报出以下信息：
+>>>>>>> b7052b13b0b3ea455523d64eefc0b5bfd23bc2e7
 
 client_loop: send disconnect: Broken pipe
 这带来很大的困扰，过一会就要重新连接，之前的临时环境变量也会丢失。
 
+<<<<<<< HEAD
 配置~/.ssh/config文件，增加以下内容即可：
+=======
+配置~/.ssh/config 文件，增加以下内容即可：
+>>>>>>> b7052b13b0b3ea455523d64eefc0b5bfd23bc2e7
 
 ```bash
 Host *
@@ -50,3 +58,12 @@ Host *
         ServerAliveInterval 5
 ```
 
+<<<<<<< HEAD
+=======
+## nohup 和 &
+
+- nohup
+  用途：不挂断运行命令
+- &
+  用途：后台运行
+>>>>>>> b7052b13b0b3ea455523d64eefc0b5bfd23bc2e7
