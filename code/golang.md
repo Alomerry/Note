@@ -373,3 +373,13 @@ gvm use go1.4 [--default]
 ## go install
 
 http://c.biancheng.net/view/122.html
+
+## Golang 大杀器之性能剖析 PProf
+
+https://segmentfault.com/a/1190000016412013
+
+https://www.cnblogs.com/TimLiuDream/p/10038239.html
+
+## golang cond唤醒锁
+
+https://blog.csdn.net/u010066807/article/details/80307484

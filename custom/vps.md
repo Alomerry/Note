@@ -19,9 +19,26 @@ cat /root/.ssh/id_rsa.pub
 搭建 v2ray
 
 安装 maven
-访问 https://downloads.apache.org/maven/maven-3/ download
-tar zxvf apache-maven-<version>-bin.tar.gz
-sudo mv apache-maven-<version>/ /opt/apache-maven-<version>/
+访问 `https://downloads.apache.org/maven/maven-3/download`
+`tar zxvf apache-maven-<version>-bin.tar.gz`
+`sudo mv apache-maven-<version>/ /opt/apache-maven-<version>/`
+
+配置环境变量
+
+```go
+sudo vim ~/.bashrc
+#如果要配置系统级别的环境变量，则应该编辑以下文件
+sudo vim /etc/profile
+export M2_HOME=/opt/maven
+export M2=$M2_HOME/bin
+export PATH=$M2:$PATH
+刷新环境变量
+source ~/.bashrc
+```
+
+
+
+
 
 安装 jdk
 sudo apt-get install openjdk-8-jdk

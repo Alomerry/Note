@@ -288,3 +288,7 @@ Date:   Sat Nov 10 17:41:55 2018 +0800
 缺点
 
 被修改分支后的所有 commit 都会被重新提交一遍，此时 master 分支 merge 这个分支的话会出现 commit 重复的问题。所以也只能在没有其他分支的情况下在主分支干这事。
+
+## Git 工具 - 高级合并
+
+https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%AB%98%E7%BA%A7%E5%90%88%E5%B9%B6

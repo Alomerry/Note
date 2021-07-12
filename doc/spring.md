@@ -117,3 +117,6 @@ Caused by: java.net.ConnectException: Connection refused: connect
 
 springboot 自动配置了 mongodb。在启动 springboo 时会自动实例化一个 mongo 实例，需要禁用自动配置 ，增加 `@SpringBootApplication(exclude = MongoAutoConfiguration.class)`
 
+## 在Spring Boot中优雅的实现定时任务
+
+https://zhuanlan.zhihu.com/p/79644891/
